@@ -1,0 +1,49 @@
+#Programa Principal / Menu tarea principal
+# Elaborado por: Gabriel Josue Marin Munoz y Derian Segura
+# Fecha de elaboración: 25/04/2026 10:10 am
+# fecha de última actualización: todavia no se ha actualizado, se actualizará a medida que se avance en el desarrollo del programa
+#version de python: 3.14.3
+#Importaciones
+#libreria de importaciones: funciones, la cual contiene todas las funciones necesarias para el funcionamiento.
+#Importaciones
+import re
+import csv
+import funciones
+
+# menú
+continuar = True 
+while  continuar:
+    print("-" * 75)                        
+    print("\nDigite un numero segun el proceso deseado\n\n1 - \n2 - Lectura de Tokens \n3 -  Agregar o modificar Tokens \n4 - Guardar Tokens en archivo \n5 - Traducir codigo \n6 Generar reporte csv\n7 - Generar archivo html\n8 - Submenu de bitacora del sistema\n9 - Salir del programa\n")
+    letraProceso = input("\nDigite su numero: ")                    
+    print("-" * 75) 
+    if letraProceso == "1":                                   
+        print("Procesar carga de tokens\n")                    
+    elif letraProceso == "2":                                      
+        print("Lectura de tokens \n")
+    elif letraProceso == "3":
+        print("Agregar o modificar Tokens \n")
+    elif letraProceso == "4":
+        print("Guardar tokens en un archivo \n")
+    elif letraProceso == "5":
+        print("Traducir codigo \n")
+    elif letraProceso == "6":
+        print("Generar reporte csv \n")
+    elif letraProceso == "7":
+        print("Generar archivo html \n")
+    elif letraProceso == "8":
+        print("Submenu de bitacora del sistema \n")
+        eleccionBitacora = input("Digite el numero del proceso que desea realizar\n1 - acciones día escogido\n2 - Acciones con algunas palabras clave\n3 - Salir del submenu de bitacora\nDigite su numero: ")
+        if eleccionBitacora == "1":
+            print("Acciones día escogido \n")
+        elif eleccionBitacora == "2":
+            print("Acciones con algunas palabras clave \n")
+        elif eleccionBitacora == "3":
+            print("Salir del submenu de bitacora \n")
+        else:
+            print("Digitaste un numero diferente de 1, 2 y 3... Regresando al menu\n")
+    elif letraProceso == "9":
+        print("Salir del programa \n")
+        continuar = False
+    else:
+        print("Digitaste un numero diferente de 1, 2, 3, 4, 5, 6, 7, 8 y 9... Regresando al menu\n")
