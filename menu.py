@@ -4,7 +4,9 @@
 # fecha de última actualización: todavia no se ha actualizado, se actualizará a medida que se avance en el desarrollo del programa
 #version de python: 3.14.3
 #Importaciones
-#libreria de importaciones: funciones, la cual contiene todas las funciones necesarias para el funcionamiento.
+listaEquivalencias = []
+
+
 #Importaciones
 import re
 import csv
@@ -14,11 +16,25 @@ import funciones
 continuar = True 
 while  continuar:
     print("-" * 75)                        
-    print("\nDigite un numero segun el proceso deseado\n\n1 - \n2 - Lectura de Tokens \n3 -  Agregar o modificar Tokens \n4 - Guardar Tokens en archivo \n5 - Traducir codigo \n6 Generar reporte csv\n7 - Generar archivo html\n8 - Submenu de bitacora del sistema\n9 - Salir del programa\n")
+    print("\nDigite un numero segun el proceso deseado\n\n1 - Procesar carga de tokens\n2 - Lectura de Tokens \n3 - Agregar o modificar Tokens \n4 - Guardar Tokens en archivo \n5 - Traducir codigo \n6 - Generar reporte csv\n7 - Generar archivo html\n8 - Submenu de bitacora del sistema\n9 - Salir del programa")
     letraProceso = input("\nDigite su numero: ")                    
     print("-" * 75) 
     if letraProceso == "1":                                   
-        print("Procesar carga de tokens\n")                    
+        print("Procesar carga de tokens\n")    
+        nombreArchivoTokens = input("Digite el nombre de su archivo que contenga sus tokens junto con su formato, ejemplo: .txt: ") 
+        metodoSeparacion = input('\nMetodos de separacion y su numero:\n1: "->"\n2: ","\n3: "="\n\nDigite el numero: ')
+        if metodoSeparacion == "1":
+            metodoSeparacion = "->"
+        elif metodoSeparacion == "2":
+            metodoSeparacion = ","
+        elif metodoSeparacion == "3":
+            metodoSeparacion = "="
+        else:
+            print("Digito un numero distinto de 1, 2 o 3")
+            continue
+        listaEquivalencias = funciones.cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias)
+        print(listaEquivalencias)
+        
     elif letraProceso == "2":                                      
         print("Lectura de tokens \n")
     elif letraProceso == "3":
