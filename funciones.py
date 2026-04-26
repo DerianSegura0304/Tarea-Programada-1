@@ -30,3 +30,23 @@ def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
         return listaEquivalencias                                        #Retorna la lista completa después de procesar todas las líneas del archivo
     except FileNotFoundError:                                            #Captura el error si el nombre del archivo no existe en el directorio
         return "El archivo no se ha encontrado. Verifique que este bien escrito y con su formato, ejemplo: .txt"
+
+def mostrarTokens(listaEquivalencias):
+    """
+    función: Muestra en pantalla los tokens y sus equivalencias almacenados en la lista, formateados de manera clara.
+    Entradas: listaEquivalencias(list): Lista que contiene las tuplas de tokens y sus equivalencias cargados en memoria.
+    Salidas: Impresión en pantalla de los tokens y sus equivalencias en formato tabular. Si la lista está vacía, se muestra un mensaje indicando que no hay tokens cargados.
+    """
+    print("\n" + "=" * 50)                                               # Imprime una línea de separación para mejorar la legibilidad del formato
+    print(f"{'TOKEN':<20} | {'EQUIVALENCIA'}")                           # Imprime los encabezados de las columnas con formato de alineación a la izquierda para el token y sin formato específico para la equivalencia
+    print("-" * 50)
+    if not listaEquivalencias:                                           # Verifica si la lista de equivalencias está vacía antes de intentar mostrar su contenido
+        print("No hay tokens cargados en memoria.")                      # Si la lista está vacía, se muestra un mensaje informativo en lugar de intentar imprimir tokens inexistentes
+    else:
+        for tupla in listaEquivalencias:                                 # Recorre cada tupla en la lista de equivalencias para imprimir su contenido
+            if isinstance(tupla, tuple) and len(tupla) > 1:              # Verifica formato y existencia de datos antes de imprimir
+                print(f"{tupla[0]:<20} | {tupla[1]}")                    # Despliega equivalencia con formato de tabla
+            else:
+                if len(tupla) == 1:                                      # Si la tupla tiene solo un elemento, se asume que es un token sin equivalencia 
+                    print(f"{tupla[0]:<20} | [Error: Sin equivalencia]") # Imprime el token con un mensaje de error indicando que no tiene una equivalencia definida.
+    print("=" * 50 + "\n")                                               #Imprime el token y su significado en formato "token -> significado"
