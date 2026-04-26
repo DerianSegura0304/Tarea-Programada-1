@@ -1,0 +1,7 @@
+return -> devuelva
+print -> pinte
+def -> funcion
+while -> mientras
+int -> entero
+str -> hilera
+input -> entrada
