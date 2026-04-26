@@ -37,6 +37,7 @@ while  continuar:
         
     elif letraProceso == "2":                                      
         print("Lectura de tokens \n")
+        funciones.mostrarTokens(listaEquivalencias)
     elif letraProceso == "3":
         print("Agregar o modificar Tokens \n")
     elif letraProceso == "4":
