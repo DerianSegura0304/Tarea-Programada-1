@@ -42,6 +42,19 @@ while  continuar:
         print("Agregar o modificar Tokens \n")
     elif letraProceso == "4":
         print("Guardar tokens en un archivo \n")
+                nombreArchivoGuardar = input("Digite el nombre del archivo donde desea guardar sus tokens junto con su formato, ejemplo: .txt: ")
+        metodoSeparacion = input('\nMetodos de separacion y su numero:\n1: "->"\n2: ","\n3: "="\n\nDigite el numero: ')
+        if metodoSeparacion == "1":
+            metodoSeparacion = "->"
+        elif metodoSeparacion == "2":
+            metodoSeparacion = ","
+        elif metodoSeparacion == "3":
+            metodoSeparacion = "="
+        else:
+            print("Digito un numero distinto de 1, 2 o 3")
+            continue
+        resultado = funciones.guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias)
+        print("\n" + resultado)
     elif letraProceso == "5":
         print("Traducir codigo \n")
     elif letraProceso == "6":
