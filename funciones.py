@@ -1,4 +1,13 @@
+#Programa Principal / Menu tarea principal
+# Elaborado por: Gabriel Josue Marin Munoz y Derian Segura
+# Fecha de elaboración: 25/04/2026 10:10 am
+# fecha de última actualización: 26/04/2026 5:59 pm
+#version de python: 3.14.3
+
 #importaciones
+import re
+
+#funciones
 def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
     """
     Función: Lee un archivo de texto con tokens, los separa según el método indicado y los almacena en una lista. 
@@ -14,19 +23,23 @@ def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
     try:
         archivo = open(nombreArchivoTokens, "r")                         #Se abre el archivo en modo lectura "r" para extraer los datos
         print("\nleyendo el archivo...\n")
+        tokensActualizados = ""                                          #Se unicializa vacia estrategicamente para almacenar los tokens actualizados
         for linea in archivo:                                            #Inicia un ciclo para procesar cada una de las líneas del documento
-            linea = linea.strip("\n")                                    #Se elimina el salto de línea al final del texto para limpiar el dato
+            linea = linea.strip()                                        #Se elimina el salto de linea al final del texto para limpiar el dato
+            linea = re.sub(rf"\s*{metodoSeparacion}\s*", metodoSeparacion, linea) #Dentro de la linea, antes y despues del metodo de separacion, dejara el texto sin espacios 
             linea = linea.split(metodoSeparacion)                        #Divide la hilera en partes según el separador indicado por el usuario
             linea = tuple(linea)                                         #Convierte el par de datos en una tupla para cumplir con el formato de almacenamiento
             encontrado = False                                           #Bandera que ayuda a determinar si el token es nuevo o una reescritura
             for tupla in range(len(listaEquivalencias)):                 #Ciclo que recorre los índices de la lista para buscar coincidencias
-                if linea[0] == listaEquivalencias[tupla][0]:             
-                    print(f"Se reescribió {linea[0]}, y conservará el reemplazo más reciente.") #Notifica al usuario sobre la sustitución del valor
+                if linea[0] == listaEquivalencias[tupla][0]:       
+                    tokensActualizados += linea[0] + ", "
                     listaEquivalencias[tupla] = linea                    #Reemplaza la tupla vieja por la nueva en la posición exacta encontrada
                     encontrado = True                                    #Marca como encontrado para no agregar el token como si fuera nuevo
                     break                                                #Sale del ciclo de búsqueda al haber logrado el reemplazo
             if not encontrado:                                           
                 listaEquivalencias.append(linea)                         #Agrega la nueva tupla al final de la lista de equivalencias
+        if len(tokensActualizados) != 0:
+            print(f"Se reescribió {tokensActualizados[:-2]}, y conservaran el reemplazo más reciente.") #Notifica al usuario sobre la sustitución del valor
         return listaEquivalencias                                        #Retorna la lista completa después de procesar todas las líneas del archivo
     except FileNotFoundError:                                            #Captura el error si el nombre del archivo no existe en el directorio
         return "El archivo no se ha encontrado. Verifique que este bien escrito y con su formato, ejemplo: .txt"
