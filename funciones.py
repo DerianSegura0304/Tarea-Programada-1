@@ -63,3 +63,30 @@ def mostrarTokens(listaEquivalencias):
                 if len(tupla) == 1:                                      # Si la tupla tiene solo un elemento, se asume que es un token sin equivalencia 
                     print(f"{tupla[0]:<20} | [Error: Sin equivalencia]") # Imprime el token con un mensaje de error indicando que no tiene una equivalencia definida.
     print("=" * 50 + "\n")                                               #Imprime el token y su significado en formato "token -> significado"
+
+def guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias):   
+    """
+    Función: Guarda la lista de tokens y sus equivalencias en un archivo de texto, utilizando el método de separación indicado por el usuario.
+    Entradas:
+    -nombreArchivoGuardar(str): Nombre del archivo físico donde se desea guardar los tokens y sus equivalencias.
+    -metodoSeparacion(str): Carácter separador que divide el token de su significado, ejemplo: "->", "=", ",".
+    -listaEquivalencias(list): Lista que contiene las tuplas de tokens y sus equivalencias que se desean guardar.
+    Salidas:
+    -Archivo de texto: Se crea o sobrescribe un archivo con el nombre especificado, conteniendo los tokens y sus equivalencias formateados según el método de separación elegido. Si la lista está vacía, se guarda un mensaje indicando que no hay tokens para guardar.
+    """
+    if len(listaEquivalencias) == 0:                                     #Verifica si la lista de equivalencias está vacía antes de intentar guardar su contenido
+            return "Error: No hay tokens en memoria para guardar. Cargue o agregue algunos primero." # Si la lista está vacía, se retorna un mensaje de error
+    try: 
+            archivoGuardar = open(nombreArchivoGuardar, "w")             #Se abre el archivo en modo escritura "w" para guardar los datos, si el archivo no existe se crea uno nuevo
+            contadorTokens = 0
+            for tupla in listaEquivalencias:                             #Recorre cada tupla en la lista de equivalencias para escribir su contenido en el archivo
+                if len(tupla) == 2:                                      #Verifica que la tupla tenga exactamente dos elementos (token y equivalencia) 
+                    linea = tupla[0] + metodoSeparacion + tupla[1] + "\n" #Formatea la línea a escribir en el archivo utilizando el método de separación elegido por el usuario y añadiendo un salto de línea al final
+                    archivoGuardar.write(linea)                          #Escribe la línea formateada en el archivo
+                    contadorTokens += 1                                  #Cuenta cuantos tokens se guardan
+                else:
+                    print("Aviso: Se saltó un dato incompleto en la lista.")
+            archivoGuardar.close()                                       #Cierra el archivo despues de escribir los tokens
+            return f"Se guardaron {contadorTokens} tokens en el archivo '{nombreArchivoGuardar}'" 
+    except:                                                              #Captura cualquier error que pueda ocurrir durante el proceso de escritura del archivo
+            return "No se pudo escribir en el archivo. \n Verifique que el nombre sea válido o que coincida con el formato:ejemplo: .txt" # Si ocurre un error, retorna el mensaje de error con retroalimentacion. 
