@@ -1,7 +1,7 @@
 #Programa Principal / Menu tarea principal
 # Elaborado por: Gabriel Josue Marin Munoz y Derian Segura
 # Fecha de elaboración: 25/04/2026 10:10 am
-# fecha de última actualización: 26/04/2026 5:59 pm
+# fecha de última actualización: 26/04/2026 11:38am
 #version de python: 3.14.3
 
 #importaciones
@@ -43,7 +43,6 @@ def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
         return listaEquivalencias                                        #Retorna la lista completa después de procesar todas las líneas del archivo
     except FileNotFoundError:                                            #Captura el error si el nombre del archivo no existe en el directorio
         return "El archivo no se ha encontrado. Verifique que este bien escrito y con su formato, ejemplo: .txt"
-
 def mostrarTokens(listaEquivalencias):
     """
     función: Muestra en pantalla los tokens y sus equivalencias almacenados en la lista, formateados de manera clara.
@@ -63,7 +62,28 @@ def mostrarTokens(listaEquivalencias):
                 if len(tupla) == 1:                                      # Si la tupla tiene solo un elemento, se asume que es un token sin equivalencia 
                     print(f"{tupla[0]:<20} | [Error: Sin equivalencia]") # Imprime el token con un mensaje de error indicando que no tiene una equivalencia definida.
     print("=" * 50 + "\n")                                               #Imprime el token y su significado en formato "token -> significado"
-
+def agregarModificarTokens(nuevosTokens, nuevoSeparador, listaEquivalencias):       #str=texto + int=entero + print=imprima
+    tokensActualizados = ""
+    TokensDivididos = nuevosTokens.split("+")
+    for token in TokensDivididos:
+        partesToken = token.split(nuevoSeparador)
+        tokenLimpio = partesToken[0]
+        tokenLimpio = tokenLimpio.strip()
+        equivalenciaLimpia = partesToken[1]
+        equivalenciaLimpia = equivalenciaLimpia.strip()
+        nuevaTupla = (tokenLimpio, equivalenciaLimpia)
+        encontrado = False
+        for tupla in range(len(listaEquivalencias)):
+            if listaEquivalencias[tupla][0] == tokenLimpio:
+                tokensActualizados += nuevaTupla[0] + ", "
+                listaEquivalencias[tupla] = nuevaTupla
+                encontrado = True
+                break
+        if not encontrado:                                           
+            listaEquivalencias.append(nuevaTupla)
+    if len(tokensActualizados) != 0:
+        print(f"Se reescribió {tokensActualizados[:-2]}, y conservaran el reemplazo más reciente.")
+    return listaEquivalencias
 def guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias):   
     """
     Función: Guarda la lista de tokens y sus equivalencias en un archivo de texto, utilizando el método de separación indicado por el usuario.
