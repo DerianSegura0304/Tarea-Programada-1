@@ -1,11 +1,11 @@
 #Programa Principal / Menu tarea principal
 # Elaborado por: Gabriel Josue Marin Munoz y Derian Segura
 # Fecha de elaboración: 25/04/2026 10:10 am
-# fecha de última actualización: todavia no se ha actualizado, se actualizará a medida que se avance en el desarrollo del programa
+# fecha de última actualización: 25/04/2026 6:25pm
 #version de python: 3.14.3
-#Importaciones
-listaEquivalencias = []
 
+#Variables Globales
+listaEquivalencias = []
 
 #Importaciones
 import re
