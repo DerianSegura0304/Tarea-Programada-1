@@ -40,6 +40,9 @@ while  continuar:
         funciones.mostrarTokens(listaEquivalencias)
     elif letraProceso == "3":
         print("Agregar o modificar Tokens \n")
+        nuevosTokens = input("Antes de digitar sus nuevos tokens, por favor separelos con un + de la siguiente manera:\ntoken =(su separador) equivalencia + token = equivalencia + ...\n\nDigite sus nuevos tokens: ")
+        nuevoSeparador = input("Digite su separador de sus nuevos tokens: ")
+        print(funciones.agregarModificarTokens(nuevosTokens, nuevoSeparador, listaEquivalencias))
     elif letraProceso == "4":
         print("Guardar tokens en un archivo \n")
         nombreArchivoGuardar = input("Digite el nombre del archivo donde desea guardar sus tokens junto con su formato, ejemplo: .txt: ")
