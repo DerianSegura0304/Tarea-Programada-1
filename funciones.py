@@ -6,6 +6,7 @@
 
 #importaciones
 import re
+import csv
 
 #funciones
 def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
