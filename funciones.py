@@ -139,3 +139,25 @@ def guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias):
             return f"Se guardaron {contadorTokens} tokens en el archivo '{nombreArchivoGuardar}'" 
     except:
             return "No se pudo escribir en el archivo. \n Verifique que el nombre sea válido o que coincida con el formato:ejemplo: .txt"
+
+def generarReporteCvs(nombreReporte, textoATraducir, listaEquivalencias):
+    '''
+    funcionamiento: espere
+    entradas: espere
+    salida: espere
+    '''
+    if not listaEquivalencias:
+        return ' No hay tokens para el reporte'
+    try: 
+        archivo = open(nombreReporte, "w" , newline="", encoding="utf-8")
+        escritor = csv.writerow(archivo)
+        for tupla in listaEquivalencias:
+            token = tupla[0]
+            palabra = tupla[1]
+            conteo = textoATraducir.lower().count(palabra.lower())
+            escritor.writerow([palabra, token, conteo])
+        archivo.close
+        return f"Reporte '{nombreReporte}' generado con éxito."
+
+    except:
+        return 'Error al generar el reporte: Verifique el nombre del archivo'
