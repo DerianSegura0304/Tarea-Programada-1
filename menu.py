@@ -1,15 +1,13 @@
 #Programa Principal / Menu tarea principal
 # Elaborado por: Gabriel Josue Marin Munoz y Derian Segura
 # Fecha de elaboración: 25/04/2026 10:10 am
-# fecha de última actualización: 25/04/2026 6:25pm
+# fecha de última actualización: 01/05/2026 4:10pm
 #version de python: 3.14.3
 
 #Variables Globales
 listaEquivalencias = []
 
 #Importaciones
-import re
-import csv
 import funciones
 
 # menú
@@ -58,8 +56,12 @@ while  continuar:
             continue
         resultado = funciones.guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias)
         print("\n" + resultado)
+
+
     elif letraProceso == "5":
-        print("Traducir codigo \n")
+        nombreArchivo = input("\nIntroduzca el nombre y formato de su archivo a leer, como en el siguiente ejemplo5: archivo.txt\n\nDigite el nombre de su archivo: ")
+        print(funciones.traducirCodigo(nombreArchivo,listaEquivalencias))
+
     elif letraProceso == "6":
         print("Generar reporte csv \n")
     elif letraProceso == "7":
