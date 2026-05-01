@@ -1,7 +1,7 @@
 #Programa Principal / Menu tarea principal
 # Elaborado por: Gabriel Josue Marin Munoz y Derian Segura
 # Fecha de elaboración: 25/04/2026 10:10 am
-# fecha de última actualización: 27/04/2026 4:11pm
+# fecha de última actualización: 01/05/2026 5:37
 #version de python: 3.14.3
 
 #importaciones
@@ -42,6 +42,7 @@ def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
                     break
             if encontrado == False:
                 listaEquivalencias.append(nuevaTupla)
+        archivo.close
         if len(tokensActualizados) != 0:
             print(f"Se reescribió {tokensActualizados[:-2]}, y conservaran el reemplazo más reciente.")
         return listaEquivalencias
@@ -105,7 +106,6 @@ def agregarModificarTokens(nuevosTokens, nuevoSeparador, listaEquivalencias):
                     break
                 else:
                     print("Su opcion no es valida, debe ser 1 o 2 unicamente.")
-                
         if encontrado == False:                                           
             listaEquivalencias.append(nuevaTupla)
     if len(tokensActualizados) != 0:
@@ -140,6 +140,67 @@ def guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias):
             return f"Se guardaron {contadorTokens} tokens en el archivo '{nombreArchivoGuardar}'" 
     except:
             return "No se pudo escribir en el archivo. \n Verifique que el nombre sea válido o que coincida con el formato:ejemplo: .txt"
+            
+def separarPalabraParensis(linea):
+    """
+    Funcionamiento: Agrega espacios alrededor de los paréntesis en una línea de texto. Esto permite que el programa 
+    reconozca los paréntesis y las palabras como elementos separados (tokens) en lugar de un solo bloque.
+    Entradas:
+    linea (str): Una cadena de texto que representa una línea de código leída desde el archivo.
+    Salida:
+    texto (str): La cadena original procesada, donde cada paréntesis ha sido rodeado por espacios (ej. ( se convierte en ().
+    """
+    texto = ""
+    for caracter in linea:
+        if caracter == "(":
+            texto += " ( "
+        elif caracter == ")":
+            texto += " ) "
+        else:
+            texto += caracter
+    return texto
+
+def traducirCodigo(nombreArchivo, listaEquivalencias):
+    """
+    Funcionamiemto: Lee un archivo de texto palabra por palabra y reemplaza los términos encontrados en la lista de
+    equivalencias por su traducción. Mantiene las palabras originales si no tienen traducción y gestiona errores de lectura o archivos vacíos.
+    Entradas:
+    nombreArchivo (str): Nombre del archivo a traducir.
+    listaEquivalencias (list): Lista de tuplas con los pares (original, traducción).
+    Salidas:
+    resultado (str): El texto traducido o un mensaje de error según el caso.
+    """
+    try:
+        coincidenciaEquivalencia = False
+        resultado = ""
+        archivoATraducir = open(nombreArchivo, "r")
+        print("\nLeyendo archivo...\n")
+        contenido = archivoATraducir.read()
+        if not contenido:
+            return "El archivo que introdujo esta vacio\n"
+        archivoATraducir.seek(0)
+        for linea in archivoATraducir:
+            if "(" in linea or ")" in linea:
+                    linea = separarPalabraParensis(linea)
+            linea = linea.split(" ")
+            for palabra in linea:
+                if palabra != "":
+                    TokenEncontrado = False
+                    for tupla in listaEquivalencias:
+                        if palabra == tupla[0]:
+                            resultado += tupla[1] + " "
+                            TokenEncontrado = True
+                            coincidenciaEquivalencia = True
+                            break
+                    if TokenEncontrado == False:
+                        resultado += palabra + " "
+                else:
+                    resultado += " "
+        if coincidenciaEquivalencia == False:
+            return "\nNo se encontraron palabras que coincidan con los Tokens, recuerde cargarlos y verificar que esten escritos identicamente\n"
+        return resultado
+    except FileNotFoundError:
+        return "\nArchivo no encontrado, verifica que este bien escrito junto con su formato, como en el siguiente ejemplo: archivo.txt\n"
 
 def generarReporteCvs(nombreReporte, textoATraducir, listaEquivalencias):
     '''
