@@ -28,6 +28,9 @@ def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
         for linea in archivo:
             linea = linea.strip()
             partesToken = linea.split(metodoSeparacion)
+            if len(partesToken) != 2:
+                archivo.close()
+                return f"Error de formato: No se encontró el separador '{metodoSeparacion}' en la línea: '{linea}'"
             tokenLimpio = partesToken[0]
             tokenLimpio = tokenLimpio.strip()
             equivalenciaLimpia = partesToken[1]
