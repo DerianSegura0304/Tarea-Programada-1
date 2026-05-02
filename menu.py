@@ -1,7 +1,7 @@
 #Programa Principal / Menu tarea principal
 # Elaborado por: Gabriel Josue Marin Munoz y Derian Segura
 # Fecha de elaboración: 25/04/2026 10:10 am
-# fecha de última actualización: 01/05/2026 4:10pm
+# fecha de última actualización: 01/05/2026 9:44pm
 #version de python: 3.14.3
 
 #Variables Globales
@@ -9,6 +9,7 @@ listaEquivalencias = []
 
 #Importaciones
 import funciones
+import csv
 
 # menú
 continuar = True 
@@ -60,10 +61,14 @@ while  continuar:
 
     elif letraProceso == "5":
         nombreArchivo = input("\nIntroduzca el nombre y formato de su archivo a leer, como en el siguiente ejemplo5: archivo.txt\n\nDigite el nombre de su archivo: ")
-        print(funciones.traducirCodigo(nombreArchivo,listaEquivalencias))
+        resultadoTraduccion = funciones.traducirCodigo(nombreArchivo, listaEquivalencias)
+        print(resultadoTraduccion)
 
     elif letraProceso == "6":
         print("Generar reporte csv \n")
+        nombreCsv = input("digite el nombre del archivo csv en donde usted quiere generar el reporte. (ejemplo: reporte1)")
+        mensaje = funciones.generarReporteCvs(nombreCsv, resultadoTraduccion, listaEquivalencias)
+        print(mensaje)
     elif letraProceso == "7":
         print("Generar archivo html \n")
     elif letraProceso == "8":
