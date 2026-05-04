@@ -7,6 +7,8 @@
 #importaciones
 import re
 import csv
+import pickle
+from datetime import datetime
 
 #funciones
 def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
@@ -45,6 +47,7 @@ def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
                     break
             if encontrado == False:
                 listaEquivalencias.append(nuevaTupla)
+                registrarAccion(f"Inserción de nuevo reemplazo: {tokenLimpio}")
         archivo.close
         if len(tokensActualizados) != 0:
             print(f"Se reescribió {tokensActualizados[:-2]}, y conservaran el reemplazo más reciente.")
@@ -112,6 +115,7 @@ def agregarModificarTokens(nuevosTokens, nuevoSeparador, listaEquivalencias):
                     print("Su opcion no es valida, debe ser 1 o 2 unicamente.")
         if encontrado == False:                                           
             listaEquivalencias.append(nuevaTupla)
+            registrarAccion(f"Inserción de nuevo reemplazo manual: {tokenLimpio}")
     if len(tokensActualizados) != 0:
         print(f"\nSe reescribió {tokensActualizados[:-2]}, y conservaran el reemplazo más reciente.")
     return listaEquivalencias
@@ -227,3 +231,43 @@ def generarReporteCvs(nombreReporte, textoATraducir, listaEquivalencias):
         return f"Reporte '{nombreReporte}' generado con éxito."
     except Exception as e:
         return f'Error al generar el reporte: {str(e)}'
+    
+def registrarAccion(descripcion):
+    '''
+    uncionamiento: Registra un evento en el sistema capturando la fecha y hora actual. 
+    Utiliza persistencia en almacenamiento secundario mediante un archivo binario para 
+    asegurar que los datos se conserven tras cerrar el programa
+    Entradas: 
+    - descripcion (str): Texto que detalla la acción realizada por el usuario.
+    Salidas:
+    - Ninguna directamente (actualiza el archivo físico 'bitácora.txt').
+    '''
+    fechaHora = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    duplaNueva = (fechaHora, descripcion)
+    try:
+        archivo = open("bitácora.txt", "rb")
+        lista = pickle.load(archivo)
+        archivo.close()
+    except:
+        lista = [] 
+    lista.append(duplaNueva)
+    archivo = open("bitácora.txt", "wb")
+    pickle.dump(lista, archivo)
+    archivo.close()
+
+def obtenerBitacora():
+    '''
+    Funcionamiento: Recupera la lista de eventos almacenados en el archivo binario 'bitácora.txt'. 
+    Es fundamental para permitir la consulta de datos históricos guardados previamente.
+    Entradas:
+    - Ninguna.
+    Salidas: 
+    - lista (list): Una lista de tuplas con el formato (fecha_hora, descripción) o una lista vacía si el archivo no existe.
+    '''
+    try:
+        archivo = open("bitácora.txt", "rb")
+        lista = pickle.load(archivo)
+        archivo.close()
+        return lista
+    except:
+        return []
