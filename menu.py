@@ -43,7 +43,7 @@ while  continuar:
         print("Agregar o modificar Tokens \n")
         nuevosTokens = input("Antes de digitar sus nuevos tokens, por favor separelos con un + de la siguiente manera:\ntoken =(su separador) equivalencia + token = equivalencia + ...\n\nDigite sus nuevos tokens: ")
         nuevoSeparador = input("Digite su separador de sus nuevos tokens: ")
-        print(funciones.agregarModificarTokens(nuevosTokens, nuevoSeparador, listaEquivalencias))
+        print(funciones.agregarModificarTokensAux(nuevosTokens, nuevoSeparador, listaEquivalencias))
         funciones.registrarAccion("El usuario selecciono la opcion 3: En donde podra agregar o modificar tokens previamente cargados")
     elif letraProceso == "4":
         print("Guardar tokens en un archivo \n")

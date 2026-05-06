@@ -75,7 +75,7 @@ def mostrarTokens(listaEquivalencias):
                 if len(tupla) == 1:
                     print(f"{tupla[0]:<20} | [Error: Sin equivalencia]")
     print("=" * 50 + "\n")
-def agregarModificarTokens(nuevosTokens, nuevoSeparador, listaEquivalencias):
+def agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias):
     """
     funcion: Permite al usuario agregar tokens que no esten dentro de los archivos o darle al usuario la opcicion
     de modificar o actualizar los tokens que ya hayan sido encontrados en los archivos 
@@ -89,36 +89,47 @@ def agregarModificarTokens(nuevosTokens, nuevoSeparador, listaEquivalencias):
     Salidas:
     listaEquivalencias(lista): lista que contiene las tuplas de los tokens y equivalencias de manera actualizada
     """
-    tokensActualizados = ""
-    TokensDivididos = nuevosTokens.split("+")
-    for token in TokensDivididos:
-        partesToken = token.split(nuevoSeparador)
-        tokenLimpio = partesToken[0]
-        tokenLimpio = tokenLimpio.strip()
-        equivalenciaLimpia = partesToken[1]
-        equivalenciaLimpia = equivalenciaLimpia.strip()
-        nuevaTupla = (tokenLimpio, equivalenciaLimpia)
-        encontrado = False
-        for tupla in range(len(listaEquivalencias)):
-            if listaEquivalencias[tupla][0] == tokenLimpio:
-                print(f"\n{nuevaTupla} ya esta registrada como {listaEquivalencias[tupla]}...\n deseas actualizar {listaEquivalencias[tupla]} por {nuevaTupla}?")
-                desicion = input("\nOpciones: \n1 - Si\n2 - No\n\n Digite su respuesta: ")
-                if desicion == "1":
-                    tokensActualizados += nuevaTupla[0] + ", "
-                    listaEquivalencias[tupla] = nuevaTupla
-                    encontrado = True
-                    break
-                elif desicion == "2":
-                    encontrado = True
-                    break
-                else:
-                    print("Su opcion no es valida, debe ser 1 o 2 unicamente.")
-        if encontrado == False:                                           
-            listaEquivalencias.append(nuevaTupla)
-            registrarAccion(f"Inserción de nuevo reemplazo manual: {tokenLimpio}")
-    if len(tokensActualizados) != 0:
-        print(f"\nSe reescribió {tokensActualizados[:-2]}, y conservaran el reemplazo más reciente.")
-    return listaEquivalencias
+    try:
+        tokensActualizados = ""
+        for token in tokensDivididos:
+            partesToken = token.split(nuevoSeparador)
+            tokenLimpio = partesToken[0]
+            tokenLimpio = tokenLimpio.strip()
+            equivalenciaLimpia = partesToken[1]
+            equivalenciaLimpia = equivalenciaLimpia.strip()
+            nuevaTupla = (tokenLimpio, equivalenciaLimpia)
+            encontrado = False
+            for tupla in range(len(listaEquivalencias)):
+                if listaEquivalencias[tupla][0] == tokenLimpio:
+                    print(f"\n{nuevaTupla} ya esta registrada como {listaEquivalencias[tupla]}...\n deseas actualizar {listaEquivalencias[tupla]} por {nuevaTupla}?")
+                    desicion = input("\nOpciones: \n1 - Si\n2 - No\n\n Digite su respuesta: ")
+                    if desicion == "1":
+                        tokensActualizados += nuevaTupla[0] + ", "
+                        listaEquivalencias[tupla] = nuevaTupla
+                        encontrado = True
+                        break
+                    elif desicion == "2":
+                        encontrado = True
+                        break
+                    else:
+                        print("Su opcion no es valida, debe ser 1 o 2 unicamente.")
+            if encontrado == False:                                           
+                listaEquivalencias.append(nuevaTupla)
+                registrarAccion(f"Inserción de nuevo reemplazo manual: {tokenLimpio}")
+        if len(tokensActualizados) != 0:
+            print(f"\nSe reescribió {tokensActualizados[:-2]}, y conservaran el reemplazo más reciente.")
+        return listaEquivalencias
+    except IndexError:
+        return "\nDigitaste diferentes separadores en la entrada de los token y en la entrada del nuevo separador\n"
+
+def agregarModificarTokensAux(nuevosTokens, nuevoSeparador, listaEquivalencias):
+    if nuevoSeparador not in ",=" and nuevoSeparador != "->":
+        return '\nUtilizo un separador invalido, debe de ser "=" , "->" o ","\n'
+    tokensDivididos = nuevosTokens.split("+")
+    if len(tokensDivididos) == 1:
+        return "No utilizaste el signo + para separar cada token"
+    return agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias)
+
 def guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias):   
     """
     Función: Guarda la lista de tokens y sus equivalencias en un archivo de texto, utilizando el método de
@@ -211,9 +222,9 @@ def traducirCodigo(nombreArchivo, listaEquivalencias):
         return "\nArchivo no encontrado, verifica que este bien escrito junto con su formato, como en el siguiente ejemplo: archivo.txt\n"
 
 def generarReporteCvs(nombreReporte, textoATraducir, listaEquivalencias):
-    '''
+    """
     funcionamiento: crea un recuento de cuantas veces aparece cada palabra original en el texto traducido
-    '''
+    """
     if not listaEquivalencias:
         return ' No hay tokens para el reporte'
     try: 
@@ -233,7 +244,7 @@ def generarReporteCvs(nombreReporte, textoATraducir, listaEquivalencias):
         return f'Error al generar el reporte: {str(e)}'
     
 def registrarAccion(descripcion):
-    '''
+    """
     uncionamiento: Registra un evento en el sistema capturando la fecha y hora actual. 
     Utiliza persistencia en almacenamiento secundario mediante un archivo binario para 
     asegurar que los datos se conserven tras cerrar el programa
@@ -241,7 +252,7 @@ def registrarAccion(descripcion):
     - descripcion (str): Texto que detalla la acción realizada por el usuario.
     Salidas:
     - Ninguna directamente (actualiza el archivo físico 'bitácora.txt').
-    '''
+    """
     fechaHora = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     duplaNueva = (fechaHora, descripcion)
     try:
@@ -256,14 +267,14 @@ def registrarAccion(descripcion):
     archivo.close()
 
 def obtenerBitacora():
-    '''
+    """
     Funcionamiento: Recupera la lista de eventos almacenados en el archivo binario 'bitácora.txt'. 
     Es fundamental para permitir la consulta de datos históricos guardados previamente.
     Entradas:
     - Ninguna.
     Salidas: 
     - lista (list): Una lista de tuplas con el formato (fecha_hora, descripción) o una lista vacía si el archivo no existe.
-    '''
+    """
     try:
         archivo = open("bitácora.txt", "rb")
         lista = pickle.load(archivo)
