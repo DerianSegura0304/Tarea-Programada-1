@@ -6,6 +6,9 @@
 
 #Variables Globales
 listaEquivalencias = []
+tiempoTotalProcesamiento = 0.0
+cantidadRemplazos = 0
+resultadoTraduccion = ""
 
 #Importaciones
 import funciones
@@ -43,7 +46,8 @@ while  continuar:
         print("Agregar o modificar Tokens \n")
         nuevosTokens = input("Antes de digitar sus nuevos tokens, por favor separelos con un + de la siguiente manera:\ntoken =(su separador) equivalencia + token = equivalencia + ...\n\nDigite sus nuevos tokens: ")
         nuevoSeparador = input("Digite su separador de sus nuevos tokens: ")
-        print(funciones.agregarModificarTokensAux(nuevosTokens, nuevoSeparador, listaEquivalencias))
+        resultado, tiempoVuelta, cantidadRemplazos = funciones.agregarModificarTokensAux(nuevosTokens, nuevoSeparador, listaEquivalencias, cantidadRemplazos)
+        tiempoTotalProcesamiento += tiempoVuelta
         funciones.registrarAccion("El usuario selecciono la opcion 3: En donde podra agregar o modificar tokens previamente cargados")
     elif letraProceso == "4":
         print("Guardar tokens en un archivo \n")
@@ -63,6 +67,7 @@ while  continuar:
         funciones.registrarAccion("El usuario selecciono la opcion 4: En Donde  guardara los tokens en un archivo")
 
     elif letraProceso == "5":
+        print("Traducir Codigo")
         nombreArchivo = input("\nIntroduzca el nombre y formato de su archivo a leer, como en el siguiente ejemplo5: archivo.txt\n\nDigite el nombre de su archivo: ")
         resultadoTraduccion = funciones.traducirCodigo(nombreArchivo, listaEquivalencias)
         print(resultadoTraduccion)
@@ -70,12 +75,14 @@ while  continuar:
 
     elif letraProceso == "6":
         print("Generar reporte csv \n")
-        nombreCsv = input("digite el nombre del archivo csv en donde usted quiere generar el reporte. (ejemplo: reporte1)")
+        nombreCsv = input("Digite el nombre del archivo csv en donde usted quiere generar el reporte. (ejemplo: reporte1)")
         mensaje = funciones.generarReporteCvs(nombreCsv, resultadoTraduccion, listaEquivalencias)
         print(mensaje)
         funciones.registrarAccion("El usuario selecciono la opcion 6: En donde  generara un reporte csv en un archivo antes creado por el usuario")
     elif letraProceso == "7":
         print("Generar archivo html \n")
+        tituloReporte = input("Digite el titulo de reporte que tendra su reporte HTML: ")
+        print(funciones.generarReporteHtml(tituloReporte, tiempoTotalProcesamiento, cantidadRemplazos, listaEquivalencias))
         funciones.registrarAccion("El usuario selecciono la opcion 7: En donde el usuario generara un archivo html .")
     elif letraProceso == "8":
         print("Submenu de bitacora del sistema \n")
