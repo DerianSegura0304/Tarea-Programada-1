@@ -9,6 +9,7 @@ import re
 import csv
 import pickle
 from datetime import datetime
+import time
 
 #funciones
 def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
@@ -75,60 +76,57 @@ def mostrarTokens(listaEquivalencias):
                 if len(tupla) == 1:
                     print(f"{tupla[0]:<20} | [Error: Sin equivalencia]")
     print("=" * 50 + "\n")
-def agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias):
-    """
-    funcion: Permite al usuario agregar tokens que no esten dentro de los archivos o darle al usuario la opcicion
-    de modificar o actualizar los tokens que ya hayan sido encontrados en los archivos 
-    Entradas:
-    nuevosToken(str): Es una cadena de texto la cual contiene los tokens, su separador y su equivalencia siendo 
-    por un signo de +
-    nuevoSeparador(str): simbolo que sera utilizado para separar los tokens de su equivalencia para ser almacenados
-    en una lista de tuplas
-    listaEquivalencias(lista): lista que contiene las tuplas de token y equivalencia, utilizada para buscar dentro
-    de ella los tokens identicos para modificarlos o agregar los que todavia no existen
-    Salidas:
-    listaEquivalencias(lista): lista que contiene las tuplas de los tokens y equivalencias de manera actualizada
-    """
+
+def insertarNoEncontrados(encontrado, listaEquivalencias, cadaToken, tokenLimpio):
+    if encontrado == False:                                           
+        listaEquivalencias.append(cadaToken)
+        registrarAccion(f"Inserción de nuevo reemplazo manual: {tokenLimpio}")
+    return listaEquivalencias
+
+def agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias, cantidadRemplazos):
+    inicioTiempo = time.time()
+    tiempoVuelta = 0.0
     try:
         tokensActualizados = ""
         for token in tokensDivididos:
             partesToken = token.split(nuevoSeparador)
-            tokenLimpio = partesToken[0]
-            tokenLimpio = tokenLimpio.strip()
-            equivalenciaLimpia = partesToken[1]
-            equivalenciaLimpia = equivalenciaLimpia.strip()
-            nuevaTupla = (tokenLimpio, equivalenciaLimpia)
+            tokenLimpio = partesToken[0].strip()
+            equivalenciaLimpia = partesToken[1].strip()
+            cadaToken = [tokenLimpio, equivalenciaLimpia, 0]
             encontrado = False
             for tupla in range(len(listaEquivalencias)):
                 if listaEquivalencias[tupla][0] == tokenLimpio:
-                    print(f"\n{nuevaTupla} ya esta registrada como {listaEquivalencias[tupla]}...\n deseas actualizar {listaEquivalencias[tupla]} por {nuevaTupla}?")
+                    print(f"\n{cadaToken} ya esta registrada como {listaEquivalencias[tupla]}...\nAun asi, desea modificarlo?")
+                    finTiempo = time.time()
+                    tiempoVuelta += finTiempo - inicioTiempo
                     desicion = input("\nOpciones: \n1 - Si\n2 - No\n\n Digite su respuesta: ")
+                    inicioTiempo = time.time()
                     if desicion == "1":
-                        tokensActualizados += nuevaTupla[0] + ", "
-                        listaEquivalencias[tupla] = nuevaTupla
+                        conteoModificacionToken = listaEquivalencias[tupla][2]
+                        listaEquivalencias[tupla] = [tokenLimpio, equivalenciaLimpia, conteoModificacionToken + 1]
+                        tokensActualizados += cadaToken[0] + ", "
+                        cantidadRemplazos += 1
                         encontrado = True
                         break
                     elif desicion == "2":
                         encontrado = True
                         break
-                    else:
-                        print("Su opcion no es valida, debe ser 1 o 2 unicamente.")
-            if encontrado == False:                                           
-                listaEquivalencias.append(nuevaTupla)
-                registrarAccion(f"Inserción de nuevo reemplazo manual: {tokenLimpio}")
+            listaEquivalencias = insertarNoEncontrados(encontrado, listaEquivalencias, cadaToken, tokenLimpio)
         if len(tokensActualizados) != 0:
-            print(f"\nSe reescribió {tokensActualizados[:-2]}, y conservaran el reemplazo más reciente.")
-        return listaEquivalencias
+            print(f"\nSe reescribió {tokensActualizados[:-2]}, y conservarán el reemplazo más reciente.")
+        finTiempo = time.time()
+        tiempoVuelta += finTiempo - inicioTiempo
+        return listaEquivalencias, tiempoVuelta, cantidadRemplazos
     except IndexError:
-        return "\nDigitaste diferentes separadores en la entrada de los token y en la entrada del nuevo separador\n"
+        return "\nDigitaste diferentes separadores en la entrada de los token...\n"
 
-def agregarModificarTokensAux(nuevosTokens, nuevoSeparador, listaEquivalencias):
+def agregarModificarTokensAux(nuevosTokens, nuevoSeparador, listaEquivalencias, cantidadRemplazos):
     if nuevoSeparador not in ",=" and nuevoSeparador != "->":
-        return '\nUtilizo un separador invalido, debe de ser "=" , "->" o ","\n'
+        return '\nUtilizo un separador invalido, debe de ser "=" , "->" o ","\n', 0, cantidadRemplazos
     tokensDivididos = nuevosTokens.split("+")
-    if len(tokensDivididos) == 1:
-        return "No utilizaste el signo + para separar cada token"
-    return agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias)
+    resultado, tiempoVuelta, cantidadRemplazos = agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias, cantidadRemplazos)
+    return resultado, tiempoVuelta, cantidadRemplazos
+
 
 def guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias):   
     """
@@ -243,6 +241,84 @@ def generarReporteCvs(nombreReporte, textoATraducir, listaEquivalencias):
     except Exception as e:
         return f'Error al generar el reporte: {str(e)}'
     
+def generarReporteHtml(tituloReporte, tiempoTotalProcesamiento, cantidadRemplazos, listaEquivalencias):
+    """
+    Funcionamiento: Genera un archivo HTML con estadísticas y una tabla de tokens 
+    con estilo profesional (centrado y filas intercaladas).
+    """
+    cantidadEquivalencias = len(listaEquivalencias)
+    porcentajeRemplazos = (cantidadRemplazos / cantidadEquivalencias * 100) if cantidadEquivalencias > 0 else 0
+    fechaActual = datetime.now().strftime("%d.%m.%y-%H.%M.%S")
+    nombreArchivo = f"reporteHTML_{fechaActual}.html"
+    filasTabla = ""
+    for tupla in listaEquivalencias:
+        tokenOriginal = tupla[0]
+        reemplazo = tupla[1]
+        conteo = tupla[2]
+        filasTabla += f"""
+                    <tr>
+                        <td>{tokenOriginal}</td>
+                        <td>{reemplazo}</td>
+                        <td>{conteo}</td>
+                    </tr>"""
+    contenido = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>  
+        <title>
+            {tituloReporte}
+        </title>
+        <style>
+            table, th, td{{
+                text-align: center;
+                padding: 10px;
+                border: 1px solid black;
+                border-collapse: collapse;
+            }}
+            th{{
+                background-color: #717171;
+            }}
+            tr:nth-child(even){{
+                background-color: #ffffff;
+            }}
+            tr:nth-child(odd){{
+                background-color: #C6C6C6;
+            }}
+        </style>
+    </head>
+    <body>
+        <h1>Reporte de Traducción</h1>
+        <h2>Fecha y hora de generación: {fechaActual}</h2>
+
+        <p>
+            Estadísticas del proceso:<br>
+            Duración total: {tiempoTotalProcesamiento} segundos<br>
+            Cantidad total de reemplazos: {cantidadRemplazos}<br>
+            Porcentaje de reemplazos {porcentajeRemplazos}%
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Palabra Original</th>
+                    <th>Reemplazo</th>
+                    <th>Cantidad de Reemplazos</th>
+                </tr>
+            </thead>
+            <tbody id="filas">
+                {filasTabla}
+            </tbody>
+        </table>
+    </body>
+    </html>
+    """
+    
+    with open(nombreArchivo, "w") as archivo:
+        archivo.write(contenido)
+    print(f"Archivo creado con éxito: {nombreArchivo}")
+    return nombreArchivo
+
+
 def registrarAccion(descripcion):
     """
     uncionamiento: Registra un evento en el sistema capturando la fecha y hora actual. 
