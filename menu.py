@@ -35,7 +35,7 @@ while  continuar:
             print("Digito un numero distinto de 1, 2 o 3")
             continue
         listaEquivalencias = funciones.cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias)
-        print(listaEquivalencias)
+        print("Tokens cargados con exito\n")
         funciones.registrarAccion("El usuario selecciono la opcion 1: En donde cargara los tokens que tenga en sus archivos")
         
     elif letraProceso == "2":                                      
@@ -70,7 +70,7 @@ while  continuar:
         print("Traducir Codigo")
         nombreArchivo = input("\nIntroduzca el nombre y formato de su archivo a leer, como en el siguiente ejemplo5: archivo.txt\n\nDigite el nombre de su archivo: ")
         resultadoTraduccion = funciones.traducirCodigo(nombreArchivo, listaEquivalencias)
-        print(resultadoTraduccion)
+        print(f"Su codigo traducido es el siguiente:\n\n{resultadoTraduccion}")
         funciones.registrarAccion("El usuario selecciono la opcion 5: En donde Traducira codigo con los tokens guardados")
 
     elif letraProceso == "6":

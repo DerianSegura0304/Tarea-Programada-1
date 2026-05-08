@@ -1,11 +1,10 @@
 #Programa Principal / Menu tarea principal
 # Elaborado por: Gabriel Josue Marin Munoz y Derian Segura
 # Fecha de elaboración: 25/04/2026 10:10 am
-# fecha de última actualización: 01/05/2026 5:37
+# fecha de última actualización: 07/05/2026 8:11
 #version de python: 3.14.3
 
 #importaciones
-import re
 import csv
 import pickle
 from datetime import datetime
@@ -38,7 +37,7 @@ def cargarTokens(nombreArchivoTokens, metodoSeparacion, listaEquivalencias):
             tokenLimpio = tokenLimpio.strip()
             equivalenciaLimpia = partesToken[1]
             equivalenciaLimpia = equivalenciaLimpia.strip()
-            nuevaTupla = (tokenLimpio, equivalenciaLimpia)
+            nuevaTupla = (tokenLimpio, equivalenciaLimpia, 0)
             encontrado = False
             for tupla in range(len(listaEquivalencias)):
                 if nuevaTupla[0] == listaEquivalencias[tupla][0]:
@@ -84,6 +83,20 @@ def insertarNoEncontrados(encontrado, listaEquivalencias, cadaToken, tokenLimpio
     return listaEquivalencias
 
 def agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias, cantidadRemplazos):
+    """
+    Procesa una lista de nuevos tokens, permitiendo al usuario decidir si desea sobrescribir aquellos 
+    que ya existen. Además, calcula el tiempo de interacción y actualiza un contador de reemplazos realizados.
+    Entradas:
+    tokensDivididos: Lista de cadenas con los nuevos pares token-equivalencia.  
+    nuevoSeparador: Símbolo para dividir cada cadena en token y significado.  
+    listaEquivalencias: Estructura de datos que almacena los tokens actuales en memoria.  
+    cantidadRemplazos: Contador acumulado de modificaciones realizadas.
+    Salidas:
+    listaEquivalencias: La lista actualizada con los nuevos datos o cambios.  
+    tiempoVuelta: Tiempo total (en segundos) que tomó el proceso.  
+    cantidadRemplazos: El contador de reemplazos actualizado.  
+    Mensaje de error: Texto explicativo si el formato del separador es incorrecto.
+    """
     inicioTiempo = time.time()
     tiempoVuelta = 0.0
     try:
@@ -121,12 +134,24 @@ def agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias, 
         return "\nDigitaste diferentes separadores en la entrada de los token...\n"
 
 def agregarModificarTokensAux(nuevosTokens, nuevoSeparador, listaEquivalencias, cantidadRemplazos):
+    """
+    Funcionamiento: Valida que el separador sea permitido (=, , o ->) y divide la 
+    cadena de entrada por el símbolo + para procesar los nuevos tokens.
+    Entradas:
+    nuevosTokens: Texto con los tokens a agregar.  
+    nuevoSeparador: Signo que divide el token de su traducción.  
+    listaEquivalencias: Lista actual en memoria.  
+    cantidadRemplazos: Contador de cambios realizados.
+    Salidas:
+    resultado: Lista actualizada o mensaje de error.  
+    tiempoVuelta: Tiempo de ejecución.  
+    cantidadRemplazos: Contador de cambios actualizado.
+    """
     if nuevoSeparador not in ",=" and nuevoSeparador != "->":
         return '\nUtilizo un separador invalido, debe de ser "=" , "->" o ","\n', 0, cantidadRemplazos
     tokensDivididos = nuevosTokens.split("+")
     resultado, tiempoVuelta, cantidadRemplazos = agregarModificarTokens(tokensDivididos, nuevoSeparador, listaEquivalencias, cantidadRemplazos)
     return resultado, tiempoVuelta, cantidadRemplazos
-
 
 def guardarTokens(nombreArchivoGuardar, metodoSeparacion, listaEquivalencias):   
     """
@@ -221,7 +246,16 @@ def traducirCodigo(nombreArchivo, listaEquivalencias):
 
 def generarReporteCvs(nombreReporte, textoATraducir, listaEquivalencias):
     """
-    funcionamiento: crea un recuento de cuantas veces aparece cada palabra original en el texto traducido
+    funcionamiento: Crea un archivo CSV que contabiliza cuántas veces aparece cada palabra 
+    traducida dentro del texto final, organizando los datos en columnas de palabra, token y cantidad.
+    Entradas:
+    nombreReporte: Nombre del archivo (se le añade .csv si no lo tiene).  
+    textoATraducir: El contenido de texto ya procesado donde se hará el conteo.  
+    listaEquivalencias: Lista de tokens y palabras para comparar.
+    Salidas:
+    Mensaje de éxito: Confirmación con el nombre del archivo generado.  
+    Mensaje de error: Descripción del fallo en caso de excepción o falta de datos.
+
     """
     if not listaEquivalencias:
         return ' No hay tokens para el reporte'
@@ -243,8 +277,16 @@ def generarReporteCvs(nombreReporte, textoATraducir, listaEquivalencias):
     
 def generarReporteHtml(tituloReporte, tiempoTotalProcesamiento, cantidadRemplazos, listaEquivalencias):
     """
-    Funcionamiento: Genera un archivo HTML con estadísticas y una tabla de tokens 
-    con estilo profesional (centrado y filas intercaladas).
+    Funcionamiento: Crea un archivo HTML con estadísticas (tiempo, reemplazos y porcentaje) y 
+    una tabla con los tokens y sus cambios, utilizando estilos CSS para un diseño profesional.
+    Entradas:
+    tituloReporte: Título del reporte.  
+    tiempoTotalProcesamiento: Segundos totales.  
+    cantidadRemplazos: Total de cambios realizados.  
+    listaEquivalencias: Datos de los tokens y sus conteos.
+    Salidas:
+    nombreArchivo: Nombre del archivo generado con fecha y hora.  
+    Archivo físico: El documento .html guardado en la carpeta del programa.
     """
     cantidadEquivalencias = len(listaEquivalencias)
     porcentajeRemplazos = (cantidadRemplazos / cantidadEquivalencias * 100) if cantidadEquivalencias > 0 else 0
@@ -317,7 +359,6 @@ def generarReporteHtml(tituloReporte, tiempoTotalProcesamiento, cantidadRemplazo
         archivo.write(contenido)
     print(f"Archivo creado con éxito: {nombreArchivo}")
     return nombreArchivo
-
 
 def registrarAccion(descripcion):
     """
